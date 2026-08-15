@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fatima &amp; Avi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="hearts-bg" id="heartsBg"></div>
+
+<header>
+  <div class="brand">Fatima <em>&amp;</em> Avi</div>
+  <nav id="mainNav">
+    <button class="tab active" data-tab="home">Home</button>
+    <button class="tab" data-tab="connect">Connect</button>
+    <button class="tab" data-tab="gallery">Gallery</button>
+    <button class="tab" data-tab="watch">Watch</button>
+    <button class="tab" data-tab="music">Music</button>
+    <button class="tab" data-tab="games">Games</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- HOME -->
+  <section id="home" class="active">
+    <div class="hero">
+      <h1>Welcome to <span>our little corner</span></h1>
+      <p>Video call, watch stuff together, play games, listen to music — everything in one place, just for us.</p>
+    </div>
+
+    <div class="counter-card">
+      <div class="num" id="dayCount">0</div>
+      <div class="label">days together</div>
+      <div style="margin-top:10px;">
+        <label style="font-size:.8rem; color:#B79AA6;">Our start date:</label><br>
+        <input type="date" id="startDate">
+      </div>
+    </div>
+
+    <div class="quick-links">
+      <button onclick="showTab('connect')">📞 Start a call</button>
+      <button onclick="showTab('gallery')">📷 Our photos</button>
+      <button onclick="showTab('games')">🎲 Play a game</button>
+    </div>
+  </section>
+
+  <!-- CONNECT -->
+  <section id="connect">
+    <h2 class="section-title">Connect</h2>
+    <p class="hint">One of you creates a room, the other joins with the code. Once connected you'll have voice, video, screen share — and all the games below will work live between you.</p>
+
+    <div class="connect-box" id="connectSetup">
+      <div class="connect-choice">
+        <button class="big-btn" onclick="Us.createRoom()">Create a room</button>
+        <div class="or">or</div>
+        <div class="join-row">
+          <input type="text" id="joinCode" placeholder="Enter room code">
+          <button class="big-btn" onclick="Us.joinRoom()">Join</button>
+        </div>
+      </div>
+      <div id="roomCodeDisplay" class="room-code-display" style="display:none;">
+        <div class="hint">Send this code to the other person:</div>
+        <div class="room-code" id="roomCodeText"></div>
+        <div class="hint" id="connectStatus">Waiting for them to join...</div>
+      </div>
+    </div>
+
+    <div class="call-ui" id="callUi" style="display:none;">
+      <div class="status-pill" id="statusPill">Connected 💕</div>
+      <div class="video-grid">
+        <div class="video-box">
+          <video id="localVideo" autoplay muted playsinline></video>
+          <div class="video-label">You</div>
+        </div>
+        <div class="video-box">
+          <video id="remoteVideo" autoplay playsinline></video>
+          <div class="video-label" id="remoteLabel">Them</div>
+        </div>
+      </div>
+      <div class="call-controls">
+        <button onclick="Us.toggleMic()" id="micBtn">🎤</button>
+        <button onclick="Us.toggleCam()" id="camBtn">📷</button>
+        <button onclick="Us.toggleScreenShare()" id="screenBtn">🖥️</button>
+        <button onclick="Us.hangUp()" class="hangup">✕</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section id="gallery">
+    <h2 class="section-title">Our Photos</h2>
+    <p class="hint">Only Avi can add new photos here (with a passcode). Everyone can browse.</p>
+    <div id="galleryLocked" class="gallery-locked">
+      <button class="big-btn" onclick="Gallery.unlock()">Unlock adding (Avi only)</button>
+    </div>
+    <div id="galleryUnlocked" style="display:none;" class="gallery-locked">
+      <input type="file" id="photoInput" accept="image/*" multiple>
+      <button class="big-btn" onclick="Gallery.addPhotos()">Add selected photos</button>
+    </div>
+    <div class="gallery-grid" id="galleryGrid"></div>
+  </section>
+
+  <!-- WATCH -->
+  <section id="watch">
+    <h2 class="section-title">Watch Together</h2>
+    <p class="hint">Connect first (in the Connect tab), then load a video here — play, pause, and seeking will sync for both of you.</p>
+    <div class="watch-box">
+      <div class="watch-input">
+        <input type="text" id="ytUrl" placeholder="Paste a YouTube link here...">
+        <button onclick="WatchSync.loadVideo()">Load</button>
+      </div>
+      <div class="video-wrap">
+        <div id="ytPlayer"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MUSIC -->
+  <section id="music">
+    <h2 class="section-title">Our Playlist</h2>
+    <p class="hint">Add your own mp3 files to the <code>/music</code> folder and list them in <code>app.js</code>.</p>
+    <div class="player">
+      <div class="disc" id="disc"></div>
+      <div class="track-name" id="trackName">Pick a song below</div>
+      <div class="controls">
+        <button onclick="prevTrack()">⏮</button>
+        <button onclick="togglePlay()" id="playBtn">▶</button>
+        <button onclick="nextTrack()">⏭</button>
+      </div>
+      <audio id="audio"></audio>
+      <ul class="playlist" id="playlist"></ul>
+    </div>
+  </section>
+
+  <!-- GAMES -->
+  <section id="games">
+    <h2 class="section-title">Game Time</h2>
+    <div class="game-select" id="gameSelect">
+      <button class="active" data-game="ttt">Tic-Tac-Toe</button>
+      <button data-game="connect4">Connect 4</button>
+      <button data-game="chess">Chess</button>
+      <button data-game="uno">Uno</button>
+      <button data-game="wordsearch">Word Search</button>
+      <button data-game="candy">Candy Match</button>
+      <button data-game="memory">Memory Match</button>
+      <button data-game="wheel">Would You Rather</button>
+    </div>
+
+    <div class="game-hint" id="liveGameHint">Live games (Tic-Tac-Toe, Connect 4, Chess, Uno) need you to Connect first.</div>
+
+    <div id="game-ttt" class="game-panel">
+      <div class="ttt-grid" id="tttGrid"></div>
+      <div class="game-status" id="tttStatus">Connect first, then take turns</div>
+      <button class="small-btn" onclick="TTT.reset()">Restart</button>
+    </div>
+
+    <div id="game-connect4" class="game-panel" style="display:none;">
+      <div class="c4-grid" id="c4Grid"></div>
+      <div class="game-status" id="c4Status">Connect first, then take turns</div>
+      <button class="small-btn" onclick="C4.reset()">Restart</button>
+    </div>
+
+    <div id="game-chess" class="game-panel" style="display:none;">
+      <div id="chessBoard" style="width:320px; margin:0 auto;"></div>
+      <div class="game-status" id="chessStatus">Connect first, then take turns</div>
+      <button class="small-btn" onclick="ChessGame.reset()">Restart</button>
+    </div>
+
+    <div id="game-uno" class="game-panel" style="display:none;">
+      <div class="uno-table">
+        <div class="uno-pile">
+          <div class="uno-card back" id="unoDrawPile" onclick="Uno.draw()">Draw</div>
+          <div class="uno-card" id="unoTopCard">—</div>
+        </div>
+        <div class="uno-hand" id="unoHand"></div>
+      </div>
+      <div class="game-status" id="unoStatus">Connect first to play</div>
+      <button class="small-btn" onclick="Uno.reset()">New Game</button>
+    </div>
+
+    <div id="game-wordsearch" class="game-panel" style="display:none;">
+      <div class="ws-words" id="wsWords"></div>
+      <div class="ws-grid" id="wsGrid"></div>
+      <div class="game-status" id="wsStatus">Find all the words!</div>
+      <button class="small-btn" onclick="WordSearch.newPuzzle()">New Puzzle</button>
+    </div>
+
+    <div id="game-candy" class="game-panel" style="display:none;">
+      <div class="candy-grid" id="candyGrid"></div>
+      <div class="game-status" id="candyStatus">Score: <span id="candyScore">0</span></div>
+      <button class="small-btn" onclick="Candy.reset()">Shuffle</button>
+    </div>
+
+    <div id="game-memory" class="game-panel" style="display:none;">
+      <div class="memory-grid" id="memoryGrid"></div>
+      <div class="memory-status" id="memoryStatus">Find all the matching pairs 💕</div>
+    </div>
+
+    <div id="game-wheel" class="game-panel" style="display:none;" >
+      <div class="wheel-wrap">
+        <div class="prompt-card" id="promptCard">Tap the button for a question!</div>
+        <button class="spin-btn" onclick="newPrompt()">Give us a question</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>made with love, hosted for free ✦</footer>
+
+<!-- Libraries: PeerJS for calls/data, jQuery + chess.js + chessboard.js for chess -->
+<script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+<script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+
+<script src="app.js"></script>
+<script src="connect.js"></script>
+<script src="gallery.js"></script>
+<script src="watch.js"></script>
+<script src="games.js"></script>
+<script src="chess-game.js"></script>
+</body>
+</html>
